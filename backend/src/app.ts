@@ -1,9 +1,20 @@
 import express from "express";
-import { prisma } from "./config/prisma";
+import { prisma } from "./config/prisma.js";
 
 const app = express();
 
 app.use(express.json());
+
+app.get("/api/users", async (req, res) => {
+  try {
+    res.send("Hello world");
+  } catch (err) {
+    console.log(err);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+});
 
 app.post("/api/users", async (req, res) => {
   try {
