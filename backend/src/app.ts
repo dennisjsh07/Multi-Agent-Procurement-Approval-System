@@ -1,38 +1,17 @@
 import express from "express";
-import { prisma } from "./config/prisma.js";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./config/swagger.js";
+import { errorMiddleware } from "./middlewares/error.middleware.js";
+import { notFoundMiddleware } from "./middlewares/notFound.middleware.js";
 
 const app = express();
 
 app.use(express.json());
 
-app.get("/api/users", async (req, res) => {
-  try {
-    res.send("Hello world");
-  } catch (err) {
-    console.log(err);
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal server error" });
-  }
-});
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.post("/api/users", async (req, res) => {
-  try {
-    const { name, email, passwordHash } = req.body;
-    const user = await prisma.user.create({
-      data: {
-        name,
-        email,
-        passwordHash,
-      },
-    });
-    return res.status(201).json(user);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      message: "Internal Server Error",
-    });
-  }
-});
+app.use(notFoundMiddleware);
+
+app.use(errorMiddleware);
 
 export default app;
