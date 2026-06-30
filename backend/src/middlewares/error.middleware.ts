@@ -15,7 +15,7 @@ export function errorMiddleware(
       apiResponse({
         success: false,
         message: "Validation Failed",
-        errors: z.treeifyError(err),
+        errors: err.flatten().fieldErrors,
       }),
     );
   }
